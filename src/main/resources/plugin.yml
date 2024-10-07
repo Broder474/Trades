@@ -1,0 +1,22 @@
+name: Trades
+version: '1.0-SNAPSHOT'
+main: net.broder.trades.Trades
+api-version: '1.21'
+
+commands:
+  balance:
+    description: Know your balance
+    usage: /balance
+    aliases: [bal]
+  earn:
+    description:  Earn some money
+    usage: earn
+  shop:
+    description: Shop
+    usage: /shop
+  baltop:
+    description: Baltop
+    usage: /baltop <number>
+  pay:
+    description: Pay
+    usage: /pay <player> <amount>
