@@ -3,17 +3,20 @@ package net.broder.trades;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.crypto.Data;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +31,7 @@ public final class Trades extends JavaPlugin {
     TreeMap<UUID, Balance> player_balances = new TreeMap<>();
     Map<UUID, Balance>NPC_balances = null;
     Server server;
+    HashMap<Integer, Commands.Shop.ShopItem>prices = new HashMap<>();
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -35,16 +39,25 @@ public final class Trades extends JavaPlugin {
         UploadBalance();
         server = getServer();
         // register commands
+        logger.severe("NIGGER");
         getCommand("balance").setExecutor(new Commands.Balance(logger, player_balances));
         getCommand("earn").setExecutor(new Commands.Earn(logger, player_balances));
-        getCommand("shop").setExecutor(new Commands.Shop(logger, player_balances));
+        getCommand("shop").setExecutor(new Commands.Shop(logger, player_balances, server, prices));
         getCommand("baltop").setExecutor(new Commands.Baltop(logger, player_balances, server));
         getCommand("pay").setExecutor(new Commands.Pay(logger, player_balances, server));
-        for (String commandName : getDescription().getCommands().keySet()) {
+        for (String commandName : getDescription().getCommands().keySet())
             getLogger().severe("Registered command: " + commandName);
-        }
         // register listeners
         getServer().getPluginManager().registerEvents(new Listeners.PlayerFirstJoinListener(logger, player_balances), this);
+        getServer().getPluginManager().registerEvents(new Listeners.ShopInventoryListener(logger, player_balances, server, prices), this);
+
+        // add items to shop
+        prices.put(0, new Commands.Shop.ShopItem(new ItemStack(Material.BIRCH_WOOD, 1), 4, 2));
+        prices.put(1, new Commands.Shop.ShopItem(new ItemStack(Material.CHERRY_WOOD, 1), 4, 2));
+        prices.put(2, new Commands.Shop.ShopItem(new ItemStack(Material.ACACIA_WOOD, 1), 4, 2));
+        prices.put(3, new Commands.Shop.ShopItem(new ItemStack(Material.DARK_OAK_WOOD, 1), 4, 2));
+        prices.put(4, new Commands.Shop.ShopItem(new ItemStack(Material.JUNGLE_WOOD, 1), 4, 2));
+
     }
 
     @Override
